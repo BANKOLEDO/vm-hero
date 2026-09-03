@@ -1472,7 +1472,12 @@
       $("nav-crew").addEventListener("click", () => goTo("crew-section"));
       $("crew").addEventListener("click", () => goTo("crew-section"));
       $("nav-log").addEventListener("click", () => goTo("log-section"));
-      $("nav-watch").addEventListener("click", () => goTo("top"));
+      $("nav-watch").addEventListener("click", () => {
+        toast("Opening Season 4 on Prime Video…");
+        window.setTimeout(() => {
+          window.location.href = seasonFourLink;
+        }, 650);
+      });
 
       // sticky bar: gains its paper card + ink rule once the page scrolls
       const topbar = $("topbar");
