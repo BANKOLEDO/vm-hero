@@ -1,0 +1,13 @@
+{
+  "name": "Vox Machina — hand-drawn realm",
+  "short_name": "Vox Machina",
+  "description": "The Drawably-drawn Vox Machina hero page. Click a card to meet the crew, roll for initiative, tick some quests.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#efe6d4",
+  "theme_color": "#efe6d4",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

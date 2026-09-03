@@ -1,0 +1,1808 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vox Machina — a hand-drawn hero</title>
+    <meta
+      name="description"
+      content="A hand-drawn Vox Machina hero page built with the drawably design system."
+    />
+    <link rel="stylesheet" href="./fonts/fonts.css" />
+    <meta name="theme-color" id="theme-color" content="#efe6d4" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./drawably/style.css" />
+    <link rel="stylesheet" href="./drawably/font/font.css" />
+    <style>
+      /* Theme */
+      :root {
+        --ink: #2a211a;
+        --ink-2: #5c4f43;
+        --ink-3: #9a8b79;
+        --vm-red: #8c1f28;
+        --vm-gold: #b08327;
+        --paper: #efe6d4;
+        --ease: cubic-bezier(0.2, 0, 0, 1);
+
+        --drawably-stroke: #2a211a;
+        --drawably-fill: #8c1f28;
+        --drawably-paper: #efe6d4;
+
+        --paper-glass: rgba(239, 230, 212, 0.87);
+        --paper-glass-strong: rgba(239, 230, 212, 0.96);
+      }
+
+      html[data-theme="dark"] {
+        --ink: #e9dcc6;
+        --ink-2: #b6a78d;
+        --ink-3: #7c6f5d;
+        --vm-red: #d9544f;
+        --vm-gold: #d0a24e;
+        --paper: #221a13;
+        --drawably-stroke: #e9dcc6;
+        --drawably-fill: #d9544f;
+        --drawably-paper: #221a13;
+        --paper-glass: rgba(34, 26, 19, 0.9);
+        --paper-glass-strong: rgba(34, 26, 19, 0.96);
+      }
+
+      html[data-theme="dark"] .hero-bg,
+      html[data-theme="dark"] .hero-bg canvas,
+      html[data-theme="dark"] .hero-bg svg,
+      html[data-theme="dark"] .portrait,
+      html[data-theme="dark"] .portrait canvas,
+      html[data-theme="dark"] .portrait svg,
+      html[data-theme="dark"] .modal-art,
+      html[data-theme="dark"] .modal-art canvas,
+      html[data-theme="dark"] .modal-art svg {
+        opacity: 0.88;
+        filter: saturate(0.88) brightness(0.9) contrast(1.02);
+      }
+
+      html[data-theme="dark"] .hero-bg::after {
+        background:
+          linear-gradient(
+            rgba(34, 26, 19, 0.18),
+            rgba(34, 26, 19, 0.8)
+          ),
+          radial-gradient(
+            circle at center,
+            rgba(34, 26, 19, 0) 35%,
+            rgba(34, 26, 19, 0.78) 100%
+          );
+        box-shadow: inset 0 0 24px rgba(34, 26, 19, 0.26);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          400 16px/1.6 Inter,
+          ui-sans-serif,
+          system-ui,
+          sans-serif;
+        letter-spacing: -0.01em;
+        min-height: 100vh;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.05;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+      }
+
+      .wrap {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* Top bar */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        transition: background 260ms var(--ease), box-shadow 260ms var(--ease);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 24px;
+        flex-wrap: wrap;
+        transition: padding 260ms var(--ease);
+      }
+
+      .topbar::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 6px;
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='6' preserveAspectRatio='none'><path d='M0 3 Q 15 1 30 3 T 60 3 T 90 3 T 120 3' fill='none' stroke='%232a211a' stroke-width='1.4' stroke-linecap='round'/></svg>")
+          repeat-x left center / 120px 6px;
+        opacity: 0;
+        transition: opacity 260ms var(--ease);
+        pointer-events: none;
+      }
+
+      .topbar.is-stuck {
+        background: var(--paper-glass-strong);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 2px 14px rgba(42, 33, 26, 0.08);
+      }
+
+      .topbar.is-stuck::after {
+        opacity: 0.55;
+      }
+
+      .topbar.is-stuck .topbar-inner {
+        padding-top: 10px;
+        padding-bottom: 12px;
+      }
+
+      .brand {
+        font-family: "Drawably Pen", Inter, sans-serif;
+        font-size: 24px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: transform 200ms var(--ease);
+      }
+
+      .brand:hover {
+        transform: rotate(-1.5deg);
+      }
+
+      .topbar nav {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .topbar nav button {
+        position: relative;
+        animation: rise 560ms var(--ease) backwards;
+      }
+
+      .topbar nav button:nth-child(1) { animation-delay: 60ms; }
+      .topbar nav button:nth-child(2) { animation-delay: 140ms; }
+      .topbar nav button:nth-child(3) { animation-delay: 220ms; }
+      .topbar nav button:nth-child(4) { animation-delay: 300ms; }
+
+      .topbar nav button:hover {
+        transform: translateY(-2px) rotate(-1deg);
+      }
+
+      .topbar nav button::after {
+        content: "";
+        position: absolute;
+        left: 6%;
+        right: 6%;
+        bottom: -7px;
+        height: 5px;
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='5' preserveAspectRatio='none'><path d='M0 2.5 Q 7.5 0.5 15 2.5 T 30 2.5 T 45 2.5 T 60 2.5' fill='none' stroke='%238c1f28' stroke-width='1.6' stroke-linecap='round'/></svg>")
+          repeat-x left center / 60px 5px;
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 260ms var(--ease);
+        pointer-events: none;
+      }
+
+      .topbar nav button.is-active::after {
+        transform: scaleX(1);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .topbar,
+        .topbar-inner,
+        .topbar nav button,
+        .topbar nav button::after,
+        .brand {
+          transition: none;
+          animation: none;
+        }
+        .topbar nav button:hover,
+        .brand:hover {
+          transform: none;
+        }
+      }
+
+      /* Hero */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        min-height: 100svh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 48px 0;
+        overflow: hidden;
+      }
+
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+      }
+
+      .hero-bg canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.65;
+      }
+
+      .hero-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            rgba(239, 230, 212, 0.6),
+            rgba(239, 230, 212, 0.85)
+          ),
+          radial-gradient(
+            ellipse at center,
+            rgba(239, 230, 212, 0) 35%,
+            rgba(239, 230, 212, 0.8) 100%
+          );
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        background: var(--paper-glass);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        padding: 40px 48px 44px;
+        margin: 1rem;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .hero-inner > * {
+        animation: rise 640ms var(--ease) backwards;
+      }
+
+      .hero-inner > *:nth-child(2) { animation-delay: 120ms; }
+      .hero-inner > *:nth-child(3) { animation-delay: 200ms; }
+      .hero-inner > *:nth-child(4) { animation-delay: 280ms; }
+      .hero-inner > *:nth-child(5) { animation-delay: 360ms; }
+      .hero-inner > *:nth-child(6) { animation-delay: 440ms; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hero-inner > * {
+          animation: none;
+        }
+      }
+
+      .hero h1 {
+        font-family: "Drawably Pen", Inter, sans-serif;
+        font-weight: 400;
+        font-size: clamp(56px, 11vw, 128px);
+        line-height: 1;
+        margin: 22px 0 6px;
+        color: var(--ink);
+      }
+
+      .hero .tagline {
+        font-family: "Drawably Pen", Inter, sans-serif;
+        font-size: clamp(18px, 3vw, 26px);
+        color: var(--ink-2);
+        margin: 0 0 18px;
+      }
+
+      .hero .badge {
+        display: inline-block;
+        font-size: 13px;
+        padding: 12px 26px;
+      }
+
+      .hero p.lede {
+        max-width: 560px;
+        margin: 0 auto 30px;
+        font-size: 18px;
+        color: var(--ink-2);
+      }
+
+      .cta-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+
+      .cta-row .drawably-button {
+        font-size: 16px;
+        padding: 10px 22px;
+      }
+
+      .scribble-note {
+        font-family: "Drawably Pen", Inter, sans-serif;
+        font-size: 17px;
+        color: var(--vm-red);
+        display: block;
+        text-align: center;
+        position: relative;
+        transform: rotate(-6deg);
+        margin: 34px auto 0;
+        max-width: min(22rem, calc(100% - 1rem));
+        width: fit-content;
+        overflow-wrap: anywhere;
+        white-space: normal;
+        overflow: hidden;
+      }
+
+      /* Crew */
+      .section {
+        padding: 26px 0 60px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+      }
+
+      .section-head h2 {
+        font-family: "Drawably Pen", Inter, sans-serif;
+        font-weight: 400;
+        font-size: 40px;
+        margin: 0;
+      }
+
+      .section-head .hint {
+        color: var(--ink-3);
+        font-size: 14px;
+      }
+
+      .crew {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 18px;
+        margin-top: 20px;
+      }
+
+      .crew .card {
+        padding: 18px;
+      }
+
+      .portrait {
+        position: relative;
+        isolation: isolate;
+        width: 92px;
+        height: 108px;
+        margin: 2px auto 0;
+        cursor: pointer;
+      }
+
+      .portrait canvas,
+      .portrait svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        transition: transform 160ms var(--ease);
+      }
+
+      .portrait:hover svg {
+        transform: scale(1.05);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .portrait svg {
+          transition: none;
+          transform: none;
+        }
+      }
+
+      .card h3 {
+        font-size: 17px;
+        margin: 16px 0 6px;
+      }
+
+      .card .role {
+        display: inline-block;
+        font-size: 11px;
+        padding: 7px 16px;
+      }
+
+      .card p {
+        margin: 10px 0 0;
+        font-size: 14px;
+        color: var(--ink-2);
+      }
+
+      /* Quest log */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 28px;
+        align-items: start;
+      }
+
+      #d20-card {
+        display: none !important;
+      }
+
+      @media (max-width: 720px) {
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .quest-list {
+        font-size: 16px;
+        margin: 0;
+      }
+
+      .quest-list li {
+        padding: 5px 0;
+      }
+
+      .logline {
+        font-family: "Drawably Pen", Inter, sans-serif;
+        font-size: 22px;
+        line-height: 1.55;
+        color: var(--ink);
+        transition: opacity 500ms var(--ease), transform 500ms var(--ease);
+      }
+
+      .logline.is-swapping {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      .logline-attribution {
+        color: var(--ink-3);
+        font-size: 13px;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        transition: opacity 500ms var(--ease), transform 500ms var(--ease);
+      }
+
+      .logline-attribution.is-swapping {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      #logline-card {
+        --quote-card-radius: 22px 28px 26px 20px / 18px 22px 20px 16px;
+        --quote-card-tilt: -1deg;
+        transition: transform 420ms var(--ease), box-shadow 420ms var(--ease), border-radius 420ms var(--ease);
+        transform: rotate(var(--quote-card-tilt));
+      }
+
+      .logline-card-inner {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 18px;
+        min-height: 110px;
+        padding: 18px 20px 20px;
+        border-radius: var(--quote-card-radius);
+      }
+
+      .logline-card-inner::before {
+        content: "";
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        top: 12px;
+        height: 6px;
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='6' preserveAspectRatio='none'><path d='M0 3 Q 15 1 30 3 T 60 3 T 90 3 T 120 3' fill='none' stroke='%238c1f28' stroke-width='1.4' stroke-linecap='round'/></svg>")
+          repeat-x left center / 120px 6px;
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .logline-card-inner .logline {
+        min-width: 0;
+        margin: 14px 0 0;
+      }
+
+      .logline-attribution {
+        margin-top: 14px;
+        justify-self: end;
+        white-space: nowrap;
+      }
+
+      .field-notes {
+        margin-top: 74px;
+      }
+
+      .field-notes-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 20px;
+      }
+
+      .field-notes-head h2 {
+        margin: 0;
+        font-family: "Drawably Pen", Inter, sans-serif;
+        font-size: 32px;
+        font-weight: 400;
+      }
+
+      .field-notes-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+
+      .field-note {
+        min-height: 156px;
+        padding: 20px;
+        transform: rotate(var(--note-tilt));
+        transition: transform 260ms var(--ease);
+      }
+
+      .field-note:hover {
+        transform: rotate(0deg) translateY(-4px);
+      }
+
+      .field-note:nth-child(1) { --note-tilt: -1.2deg; }
+      .field-note:nth-child(2) { --note-tilt: 0.8deg; }
+      .field-note:nth-child(3) { --note-tilt: -0.5deg; }
+
+      .field-note h3 {
+        margin: 16px 0 4px;
+        font-family: "Drawably Pen", Inter, sans-serif;
+        font-size: 22px;
+        font-weight: 400;
+      }
+
+      .field-note p {
+        margin: 0;
+        color: var(--ink-2);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .notes-shuffle {
+        white-space: nowrap;
+      }
+
+      @media (max-width: 720px) {
+        #logline-card {
+          transform: none;
+        }
+
+        .logline-card-inner {
+          grid-template-columns: 1fr;
+          align-items: flex-start;
+          gap: 8px;
+          min-height: 0;
+          padding: 16px 18px 18px;
+        }
+
+        .logline-card-inner .logline,
+        .logline-attribution {
+          margin-top: 0;
+        }
+
+        .logline-attribution {
+          justify-self: start;
+          white-space: normal;
+        }
+
+        .field-notes {
+          margin-top: 54px;
+        }
+
+        .field-notes-head {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .field-notes-grid {
+          grid-template-columns: 1fr;
+          gap: 14px;
+        }
+      }
+
+      footer {
+        color: var(--ink-3);
+        font-size: 13px;
+        text-align: center;
+        padding: 10px 0 42px;
+      }
+
+      footer a {
+        color: var(--ink-2);
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+
+      /* Reveals */
+      .reveal {
+        opacity: 0;
+        transform: translateY(22px);
+        transition:
+          opacity 500ms var(--ease),
+          transform 500ms var(--ease);
+      }
+
+      .reveal.is-in {
+        opacity: 1;
+        transform: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+      }
+
+      /* Toasts */
+      .toast-host {
+        position: fixed;
+        left: 50%;
+        bottom: 26px;
+        transform: translateX(-50%);
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        pointer-events: none;
+      }
+
+      .toast {
+        background: var(--paper-glass-strong);
+        color: var(--ink);
+        font-size: 14px;
+        padding: 12px 22px;
+        animation: rise 320ms var(--ease);
+        transition:
+          opacity 400ms var(--ease),
+          transform 400ms var(--ease);
+      }
+
+      .toast.is-out {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      .section-head .drawably-button {
+        margin-left: auto;
+      }
+
+    /* Night toggle */
+      .night-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        font: 500 13px/1 "Inter", sans-serif;
+        color: var(--ink);
+      }
+
+      /* Quest checklist */
+      .quest-list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0;
+        display: grid;
+        gap: 4px;
+      }
+
+      .quest-list li {
+        max-width: 100%;
+      }
+
+      .quest-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        max-width: 100%;
+        line-height: 1.55;
+        padding: 8px 4px;
+      }
+
+      /* the drawably checkbox chrome is a fixed 22x22 box; keep it out of the
+         text flow and give its absolutely-positioned input a containing block */
+      .quest-item .drawably-checkbox {
+        flex: none;
+        position: relative;
+      }
+
+      .quest-item.is-done span {
+        text-decoration: line-through;
+        text-decoration-thickness: 1.5px;
+        text-decoration-color: var(--vm-red);
+        opacity: 0.75;
+      }
+
+      /* Initiative */
+      .d20 {
+        text-align: center;
+        padding: 18px 20px 20px;
+      }
+
+      .d20-kicker {
+        margin: 0;
+        font: 500 11px/1.2 "Geist Mono", monospace;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+      }
+
+      .d20-die {
+        position: relative;
+        width: 128px;
+        height: 128px;
+        margin: 8px auto 10px;
+        cursor: pointer;
+      }
+
+      .d20-die svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .d20-die.is-rolling svg {
+        animation: d20spin 0.9s var(--ease);
+      }
+
+      @keyframes d20spin {
+        to {
+          transform: rotate(720deg) scale(0.9);
+        }
+      }
+
+      .d20-face {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font: 400 42px/1 "Drawably Pen", Inter, sans-serif;
+        color: var(--vm-red);
+        pointer-events: none;
+      }
+
+      .d20-result {
+        min-height: 1.6em;
+        margin: 10px 0 4px;
+        font: 400 18px/1.4 "Drawably Pen", Inter, sans-serif;
+        color: var(--vm-red);
+      }
+
+      .countdown {
+        margin: 0;
+        font-size: 12px;
+        color: var(--ink-3);
+      }
+
+      /* Character modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(42, 33, 26, 0.35);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+
+      .modal-overlay[hidden] {
+        display: none;
+      }
+
+      .modal-card {
+        position: relative;
+        width: min(560px, 94vw);
+        max-height: 90vh;
+        overflow: auto;
+        padding: 26px 28px 28px;
+        background: var(--paper);
+        text-align: center;
+      }
+
+      .modal-x {
+        position: absolute;
+        top: 10px;
+        right: 16px;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        font: 400 24px/1 "Drawably Pen", Inter, sans-serif;
+        color: var(--vm-red);
+      }
+
+      .modal-art {
+        width: 196px;
+        height: 232px;
+        margin: 6px auto 0;
+      }
+
+      .modal-art canvas,
+      .modal-art svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .modal-name {
+        font: 400 34px/1.1 "Drawably Pen", Inter, sans-serif;
+        margin: 10px 0 6px;
+      }
+
+      .modal-weapon {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--ink-3);
+      }
+
+      .modal-bio {
+        max-width: 420px;
+        margin: 10px auto 0;
+        font-size: 14px;
+        color: var(--ink-2);
+      }
+
+      .modal-quote {
+        max-width: 430px;
+        margin: 12px auto 0;
+        font: 400 19px/1.5 "Drawably Pen", Inter, sans-serif;
+        color: var(--vm-red);
+      }
+
+      .modal-card .drawably-button {
+        margin-top: 14px;
+        font-size: 13px;
+      }
+
+      body.no-scroll {
+        overflow: hidden;
+      }
+
+    /* Back to top and ink trail */
+      .totop {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 30;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition:
+          opacity 240ms var(--ease),
+          transform 240ms var(--ease);
+      }
+
+      .totop.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: none;
+      }
+
+      .ink-trail {
+        position: fixed;
+        inset: 0;
+        z-index: 8;
+        pointer-events: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .d20-die.is-rolling svg,
+        .totop {
+          animation: none;
+          transition: none;
+        }
+      }
+
+      /* ---- mobile: the topbar becomes one tidy stacked column ---- */
+      @media (max-width: 680px) {
+        .topbar-inner {
+          display: grid;
+          grid-template-columns: 1fr;
+          justify-items: center;
+          row-gap: 12px;
+          padding: 16px 16px;
+        }
+
+        .topbar.is-stuck .topbar-inner {
+          padding-top: 12px;
+          padding-bottom: 12px;
+        }
+
+        .topbar nav {
+          width: 100%;
+          justify-content: center;
+          gap: 6px;
+        }
+
+        .topbar nav .drawably-button {
+          padding: 8px 12px;
+          font-size: 14px;
+        }
+
+        .night-toggle {
+          font-size: 12px;
+        }
+
+        .hero-inner {
+          padding: 28px 18px 32px;
+          margin: 0.5rem;
+        }
+
+        .hero h1 {
+          font-size: clamp(46px, 16vw, 76px);
+        }
+
+        .cta-row {
+          gap: 10px;
+        }
+
+        .cta-row .drawably-button {
+          padding: 9px 14px;
+          font-size: 15px;
+        }
+
+        .scribble-note {
+          margin-top: 24px;
+          font-size: 15px;
+          max-width: calc(100% - 20px);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: block;
+        }
+
+        .drawably-arrow {
+          max-width: 88vw;
+        }
+
+        .wrap {
+          padding: 0 16px;
+        }
+      }
+
+    </style>
+  </head>
+  <body>
+    <header class="topbar" id="topbar">
+      <div class="wrap topbar-inner">
+        <span class="brand" id="brand">Vox Machina</span>
+        <nav>
+          <button id="nav-crew" type="button" data-spy="crew-section">The Crew</button>
+          <button id="nav-log" type="button" data-spy="log-section">Quest Log</button>
+          <label class="night-toggle" id="night-wrap" title="Flip the papers to Night in Tal'Dorei">
+            <input type="checkbox" id="night-input" />
+            <span>Night</span>
+          </label>
+          <button id="nav-watch" type="button">Watch Now</button>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero" id="top">
+      <div class="hero-bg" id="hero-bg" aria-hidden="true"></div>
+      <div class="wrap hero-inner" id="hero-card">
+        <span class="badge" id="season">The Legend of Vox Machina &middot; S4</span>
+        <h1>Vox Machina</h1>
+        <p class="tagline">
+          A band of <span id="w-booze">booze</span>-soaked misfits saving the world —
+          <span id="w-accident">mostly by accident</span>.
+        </p>
+        <p class="lede">
+          Critical Role's <span id="w-mercs">mercenaries for hire</span> trade the
+          tavern for <span id="w-destiny">destiny</span>: dragons, demons, and one
+          very stressed bear.
+        </p>
+        <div class="cta-row">
+          <button id="watch" type="button">Watch Season 4</button>
+          <button id="crew" type="button">Meet the Crew</button>
+          <button id="trailer" type="button">Play Trailer</button>
+        </div>
+        <span class="scribble-note" id="note">this way to Tal'Dorei &rarr;</span>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <hr id="rule-1" />
+
+      <section class="section" id="crew-section">
+        <div class="section-head">
+          <h2>The Crew</h2>
+          <span class="hint">tap a card to meet the whole crew</span>
+          <button id="resketch" type="button">Re-sketch the crew</button>
+        </div>
+        <div class="crew">
+          <div class="card" id="c-keyleth">
+            <div class="portrait" id="p-keyleth" role="img" title="click to re-sketch"></div>
+            <h3>Keyleth</h3>
+            <span class="role" id="r-keyleth">DRUID</span>
+            <p>Half-elven heart of the group. Turns into animals, panics politely.</p>
+          </div>
+          <div class="card" id="c-vax">
+            <div class="portrait" id="p-vax" role="img" title="click to re-sketch"></div>
+            <h3>Vax'ildan</h3>
+            <span class="role" id="r-vax">ROGUE</span>
+            <p>Twin daggers, twin problems. The Matron of Ravens' favorite problem.</p>
+          </div>
+          <div class="card" id="c-vex">
+            <div class="portrait" id="p-vex" role="img" title="click to re-sketch"></div>
+            <h3>Vex'ahlia</h3>
+            <span class="role" id="r-vex">RANGER</span>
+            <p>Keen ears, sharper aim. Trinket the bear rides shotgun.</p>
+          </div>
+          <div class="card" id="c-percy">
+            <div class="portrait" id="p-percy" role="img" title="click to re-sketch"></div>
+            <h3>Percival</h3>
+            <span class="role" id="r-percy">GUNSLINGER</span>
+            <p>Wealthy inventor with a pepperbox revolver and a grudge list.</p>
+          </div>
+          <div class="card" id="c-grog">
+            <div class="portrait" id="p-grog" role="img" title="click to re-sketch"></div>
+            <h3>Grog</h3>
+            <span class="role" id="r-grog">BARBARIAN</span>
+            <p>Goliath. Ale enthusiast. "I would like to rage."</p>
+          </div>
+          <div class="card" id="c-pike">
+            <div class="portrait" id="p-pike" role="img" title="click to re-sketch"></div>
+            <h3>Pike</h3>
+            <span class="role" id="r-pike">CLERIC</span>
+            <p>Small gnome, enormous goddess on speed dial. Heals, then headbutts.</p>
+          </div>
+          <div class="card" id="c-scanlan">
+            <div class="portrait" id="p-scanlan" role="img" title="click to re-sketch"></div>
+            <h3>Scanlan</h3>
+            <span class="role" id="r-scanlan">BARD</span>
+            <p>Big hands, bigger ballads. Fights with flute and filthy limericks.</p>
+          </div>
+          <div class="card" id="c-trinket">
+            <div class="portrait" id="p-trinket" role="img" title="click to re-sketch"></div>
+            <h3>Trinket</h3>
+            <span class="role" id="r-trinket">GOOD BOY</span>
+            <p>A bear. In a necklace. The most emotionally stable member.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr id="rule-2" />
+
+      <section class="section" id="log-section">
+        <div class="section-head">
+          <h2>Season Four Log</h2>
+          <span class="hint">spoilers scribbled in the margins</span>
+        </div>
+        <div class="two-col">
+          <ul class="quest-list" id="quests">
+            <li>The Cinder King's army marches on Whitestone.</li>
+            <li>A new party of misfits applies for the job.</li>
+            <li>Percy's list has one name left on it.</li>
+            <li>Scanlan is legally required to sing about all of it.</li>
+          </ul>
+          <div class="card d20" id="d20-card">
+            <p class="d20-kicker">initiative check</p>
+            <div class="d20-die" id="d20-die" title="click to roll" role="button" aria-label="roll a d20">
+              <span class="d20-face" id="d20-face">20</span>
+            </div>
+            <button id="d20-btn" type="button">Roll for Initiative</button>
+            <p class="d20-result" id="d20-result" aria-live="polite"></p>
+            <p class="countdown" id="countdown">Season 4 is streaming now.</p>
+          </div>
+          <div class="card" id="logline-card">
+            <div class="logline-card-inner">
+              <p class="logline" id="rotating-quote">
+                "We're <span id="w-here">here</span> to save the world —
+                <span id="w-dinner">right after dinner</span>."
+              </p>
+              <span class="logline-attribution" id="quote-attribution">— Grog Strongjaw, tactician</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section field-notes" id="field-notes">
+        <div class="field-notes-head">
+          <div>
+            <h2>Field Notes</h2>
+            <span class="hint">scribbles from the road</span>
+          </div>
+          <button class="notes-shuffle" id="shuffle-notes" type="button">Shuffle the notes</button>
+        </div>
+        <div class="field-notes-grid">
+          <article class="card field-note" id="note-rations">
+            <span class="badge">SUPPLY CHECK</span>
+            <h3>Rations: questionable</h3>
+            <p>There is one clean waterskin left. Grog has volunteered to taste it.</p>
+          </article>
+          <article class="card field-note" id="note-route">
+            <span class="badge">NEXT STOP</span>
+            <h3>Whitestone road</h3>
+            <p>Keep the mountains on the left and Scanlan away from the map.</p>
+          </article>
+          <article class="card field-note" id="note-morale">
+            <span class="badge">PARTY MORALE</span>
+            <h3>Chaotic, but rising</h3>
+            <p>Someone has started a song about the mission. It may become a ballad.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      Built by <a href="https://devolabanks.xyz" target="_blank" rel="noreferrer">dev_olabanks</a>
+      · Credits to <a href="https://drawably.dev" target="_blank" rel="noreferrer">drawably.dev</a>
+      · Vox Machina and its characters belong to <a href="https://critrole.com" target="_blank" rel="noreferrer">Critical Role</a>
+    </footer>
+
+    <div class="modal-overlay" id="modal" hidden>
+      <div class="modal-card" id="modal-card" role="dialog" aria-modal="true">
+        <button class="modal-x" id="modal-x" type="button" aria-label="close">&times;</button>
+        <div class="modal-art" id="modal-art"></div>
+        <h3 class="modal-name" id="modal-name"></h3>
+        <span class="role modal-badge" id="modal-badge"></span>
+        <p class="modal-weapon" id="modal-weapon"></p>
+        <p class="modal-bio" id="modal-bio"></p>
+        <p class="modal-quote" id="modal-quote"></p>
+        <button id="modal-resketch" type="button">Fresh ink, please</button>
+      </div>
+    </div>
+
+    <button class="totop" id="totop" type="button" aria-label="back to top">&#8593; Top</button>
+    <canvas class="ink-trail" id="ink-trail" aria-hidden="true"></canvas>
+
+    <div class="toast-host" id="toasts" aria-live="polite"></div>
+
+    <script type="module">
+      import {
+        drawablyArrow,
+        drawablyBadge,
+        drawablyButton,
+        drawablyCard,
+        drawablyCircle,
+        drawablyDivider,
+        drawablyHighlight,
+        drawablyUnderline,
+        drawablyCheckbox,
+        drawablyToggle,
+        variants,
+        roughLine,
+      } from "./drawably/dist/index.js";
+      import { drawPortrait } from "./characters.js";
+      import { sketchPortrait, sketchPattern } from "./sketch.js";
+      import { CHARACTERS } from "./data.js";
+
+      const $ = (id) => document.getElementById(id);
+
+      // Top bar
+      drawablyBadge($("brand"), { variant: "scribble" });
+      drawablyButton($("nav-crew"), { tone: "neutral" });
+      drawablyButton($("nav-log"), { tone: "neutral" });
+      drawablyButton($("nav-watch"), { variant: "solid" });
+
+      // Hero
+      drawablyBadge($("season"), { seed: 7 });
+      drawablyHighlight($("w-booze"));
+      drawablyUnderline($("w-accident"));
+      drawablyHighlight($("w-mercs"));
+      drawablyCircle($("w-destiny"));
+      const watchSketch = drawablyButton($("watch"), { variant: "solid" });
+      drawablyButton($("crew"));
+      const trailerSketch = drawablyButton($("trailer"), { variant: "scribble", fill: "#b08327" });
+      drawablyArrow($("note"), $("watch"), { seed: 42 });
+
+      // Dividers
+      drawablyDivider($("rule-1"));
+      drawablyDivider($("rule-2"));
+
+      // Crew cards
+      drawablyCard($("c-keyleth"));
+      drawablyCard($("c-vax"));
+      drawablyCard($("c-vex"));
+      drawablyCard($("c-percy"));
+      drawablyCard($("c-grog"));
+      drawablyCard($("c-pike"));
+      drawablyCard($("c-scanlan"));
+      drawablyCard($("c-trinket"));
+      drawablyBadge($("r-keyleth"));
+      drawablyBadge($("r-vax"));
+      drawablyBadge($("r-vex"));
+      drawablyBadge($("r-percy"));
+      drawablyBadge($("r-grog"));
+      drawablyBadge($("r-pike"));
+      drawablyBadge($("r-scanlan"));
+      drawablyBadge($("r-trinket"));
+
+      // Field notes
+      const fieldNoteIds = ["note-rations", "note-route", "note-morale"];
+      const fieldNoteSets = [
+        [
+          ["SUPPLY CHECK", "Rations: questionable", "There is one clean waterskin left. Grog has volunteered to taste it."],
+          ["NEXT STOP", "Whitestone road", "Keep the mountains on the left and Scanlan away from the map."],
+          ["PARTY MORALE", "Chaotic, but rising", "Someone has started a song about the mission. It may become a ballad."],
+        ],
+        [
+          ["PERCY'S LEDGER", "One name remains", "The list is shorter. The grudge is not."],
+          ["ARCANE WEATHER", "Dragons overhead", "If the sky starts glowing, tell Keyleth before touching anything."],
+          ["BARDIC NOTICE", "Song in progress", "Scanlan has found a chorus and refuses to let the party leave."],
+        ],
+        [
+          ["CAMP REPORT", "Fire: technically lit", "Pike brought blankets. Grog brought a tree."],
+          ["TACTICAL UPDATE", "Plan B is Plan A", "Vax has scouted ahead. Vex has scouted the nearest treasure."],
+          ["THREAT LEVEL", "Dramatically ominous", "The villains have monologues. The heroes have snacks."],
+        ],
+      ];
+      let fieldNoteSetIndex = 0;
+      const fieldNoteSketches = fieldNoteIds.map((id) => {
+        const note = $(id);
+        const sketch = drawablyCard(note);
+        drawablyBadge(note.querySelector(".badge"));
+        return sketch;
+      });
+      drawablyButton($("shuffle-notes"), { tone: "neutral" });
+      $("shuffle-notes").addEventListener("click", () => {
+        fieldNoteSetIndex = (fieldNoteSetIndex + 1) % fieldNoteSets.length;
+        const notes = fieldNoteSets[fieldNoteSetIndex];
+        fieldNoteIds.forEach((id, i) => {
+          const note = $(id);
+          const [badge, title, copy] = notes[i];
+          note.querySelector(".badge").textContent = badge;
+          note.querySelector("h3").textContent = title;
+          note.querySelector("p").textContent = copy;
+          fieldNoteSketches[i].resketch(Math.floor(Math.random() * 2 ** 31));
+          note.style.setProperty("--note-tilt", `${(Math.random() * 2.4 - 1.2).toFixed(1)}deg`);
+        });
+        toast("The field notes have been re-inked");
+      });
+
+      // Quest log
+      document.querySelectorAll("#quests li").forEach((li, i) => {
+        const label = document.createElement("label");
+        label.className = "quest-item";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        const span = document.createElement("span");
+        span.textContent = li.textContent.trim();
+        li.textContent = "";
+        cb.checked = localStorage.getItem("vm-q" + i) === "1";
+        const check = document.createElement("span");
+        check.append(cb);
+        label.append(check);
+        drawablyCheckbox(check, { seed: 11 + i });
+        label.append(span);
+        const syncDone = () => {
+          label.classList.toggle("is-done", cb.checked);
+          localStorage.setItem("vm-q" + i, cb.checked ? "1" : "0");
+        };
+        cb.addEventListener("change", syncDone);
+        syncDone();
+        li.append(label);
+      });
+      drawablyCard($("logline-card"));
+
+      const quoteEntries = [
+        {
+          quote:
+            "We're <span id=\"w-here\">here</span> to save the world — <span id=\"w-dinner\">right after dinner</span>.",
+          attribution: "— Grog Strongjaw, tactician",
+        },
+        {
+          quote: "I am the hand of fate. The scythe of the Matron.",
+          attribution: "— Vax'ildan, troublemaker",
+        },
+        {
+          quote: "Darling, aim for the heart. It's polite.",
+          attribution: "— Vex'ahlia, sharpshooter",
+        },
+        {
+          quote: "I don't need vengeance. I keep a ledger instead.",
+          attribution: "— Percival de Rolo, inventor",
+        },
+        {
+          quote: "Heals first, smites second, hugs after.",
+          attribution: "— Pike Trickfoot, cleric",
+        },
+        {
+          quote: "I have a song for every occasion. I am legally required to sing it.",
+          attribution: "— Scanlan Shorthalt, bard",
+        },
+      ];
+
+      const rotatingQuote = $("rotating-quote");
+      const quoteAttribution = $("quote-attribution");
+      let quoteIndex = 0;
+
+      const decorateQuoteWords = () => {
+        const here = rotatingQuote.querySelector("#w-here");
+        const dinner = rotatingQuote.querySelector("#w-dinner");
+        if (here) drawablyHighlight(here);
+        if (dinner) drawablyCircle(dinner);
+      };
+
+      const updateQuoteCardShape = (text) => {
+        const plainText = text.replace(/<[^>]*>/g, "");
+        const length = plainText.length;
+        const radiusA = 18 + (length % 6) * 4;
+        const radiusB = 20 + ((length + 3) % 7) * 4;
+        const skew = ((length % 5) - 2) * 0.7;
+        const card = $("logline-card");
+        if (!card) return;
+        card.style.setProperty(
+          "--quote-card-radius",
+          `${radiusA}px ${radiusB + 8}px ${radiusA + 10}px ${radiusB}px / ${radiusA + 4}px ${radiusB + 6}px ${radiusA + 8}px ${radiusB - 2}px`,
+        );
+        card.style.setProperty("--quote-card-tilt", `${skew}deg`);
+      };
+
+      const setQuote = (nextIndex) => {
+        const entry = quoteEntries[nextIndex];
+        if (!entry) return;
+
+        rotatingQuote.classList.add("is-swapping");
+        quoteAttribution.classList.add("is-swapping");
+
+        window.setTimeout(() => {
+          rotatingQuote.innerHTML = entry.quote;
+          quoteAttribution.textContent = entry.attribution;
+          updateQuoteCardShape(entry.quote);
+          decorateQuoteWords();
+          window.requestAnimationFrame(() => {
+            rotatingQuote.classList.remove("is-swapping");
+            quoteAttribution.classList.remove("is-swapping");
+          });
+        }, 180);
+
+        quoteIndex = nextIndex;
+      };
+
+      updateQuoteCardShape(quoteEntries[0].quote);
+      setQuote(0);
+      window.setInterval(() => {
+        setQuote((quoteIndex + 1) % quoteEntries.length);
+      }, 4200);
+
+      // Portraits
+      const crew = [...document.querySelectorAll(".crew .card .portrait")]
+        .map((p) => p.id.replace(/^p-/, ""))
+        .filter(Boolean);
+      const mounts = {};
+      for (const name of crew) {
+        const host = $("p-" + name);
+        const mount = () =>
+          sketchPortrait(host, name).then((ok) => {
+            if (!ok) drawPortrait(host, name);
+          });
+        mounts[name] = mount;
+        mount();
+      }
+
+      // Hero wallpaper
+      const mountHero = () =>
+        sketchPattern($("hero-bg"), crew).then((ok) => {
+          if (!ok) $("hero-bg").remove();
+        });
+      mountHero();
+
+      drawablyCard($("hero-card"));
+
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // hand-drawn toasts
+      const toasts = $("toasts");
+      const toast = (msg) => {
+        const el = document.createElement("div");
+        el.className = "toast";
+        el.textContent = msg;
+        toasts.appendChild(el);
+        drawablyCard(el);
+        window.setTimeout(() => el.classList.add("is-out"), 2400);
+        window.setTimeout(() => el.remove(), 3000);
+      };
+
+      const seasonFourLink = "https://www.primevideo.com/search/ref=atv_nb_sr?phrase=The%20Legend%20of%20Vox%20Machina";
+      const trailerLink = "https://www.youtube.com/results?search_query=The+Legend+of+Vox+Machina+Season+4+official+trailer";
+
+      // CTAs get real button states + feedback
+      $("watch").addEventListener("click", () => {
+        watchSketch.setState("loading");
+        window.setTimeout(() => {
+          watchSketch.setState("idle");
+          toast("Opening Season 4 on Prime Video…");
+          window.setTimeout(() => {
+            window.location.href = seasonFourLink;
+          }, 650);
+        }, 900);
+      });
+
+      $("trailer").addEventListener("click", () => {
+        trailerSketch.setState("loading");
+        window.setTimeout(() => {
+          trailerSketch.setState("idle");
+          toast("Opening the Season 4 trailer search on YouTube…");
+          window.setTimeout(() => {
+            window.location.href = trailerLink;
+          }, 650);
+        }, 1100);
+      });
+
+      // nav + smooth scrolling
+      const goTo = (id) =>
+        $(id)?.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth" });
+      $("brand").addEventListener("click", () => goTo("top"));
+      $("nav-crew").addEventListener("click", () => goTo("crew-section"));
+      $("crew").addEventListener("click", () => goTo("crew-section"));
+      $("nav-log").addEventListener("click", () => goTo("log-section"));
+      $("nav-watch").addEventListener("click", () => goTo("top"));
+
+      // sticky bar: gains its paper card + ink rule once the page scrolls
+      const topbar = $("topbar");
+      const onScroll = () => {
+        topbar.classList.toggle("is-stuck", window.scrollY > 24);
+        $("totop")?.classList.toggle("is-visible", window.scrollY > 600);
+      };
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+
+      // scroll-spy: wavy underline follows the section currently in view
+      const spyBtns = [...topbar.querySelectorAll("[data-spy]")];
+      const spy = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            for (const b of spyBtns)
+              b.classList.toggle("is-active", b.dataset.spy === e.target.id);
+          }
+        },
+        { rootMargin: "-35% 0px -55% 0px" },
+      );
+      ["top", "crew-section", "log-section"].forEach((id) => {
+        const s = $(id);
+        if (s) spy.observe(s);
+      });
+
+      // redraw every portrait + the hero pattern with a fresh hand
+      drawablyButton($("resketch"), { tone: "neutral" });
+      $("resketch").addEventListener("click", () => {
+        for (const name of crew) mounts[name]();
+        mountHero();
+        toast("Fresh ink for the whole crew");
+      });
+
+      // scroll-in reveals: cards rise as they enter the viewport
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-in");
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.15 },
+      );
+      document.querySelectorAll(".crew .card, .two-col > *").forEach((el, i) => {
+        el.classList.add("reveal");
+        el.style.transitionDelay = `${(i % 4) * 70}ms`;
+        io.observe(el);
+      });
+    // ============ NIGHT IN TAL'DOREI ============
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      let trailCol = "";
+      const applyTheme = (dark) => {
+        document.documentElement.dataset.theme = dark ? "dark" : "";
+        themeMeta?.setAttribute("content", dark ? "#221a13" : "#efe6d4");
+      };
+      // every sketch canvas is rasterised with whatever ink was current at draw
+      // time — flipping the theme means re-inking the whole page from the new
+      // --drawably-stroke token
+      const redrawSketches = () => {
+        for (const name of crew) mounts[name]();
+        mountHero();
+        if (!$("modal")?.hidden) {
+          const n = modalCardEl.dataset.name;
+          if (n) mountModalArt(n);
+        }
+      };
+      drawablyToggle($("night-wrap"), { seed: 4 });
+      const nightIn = $("night-input");
+      nightIn.checked =
+        localStorage.getItem("vm-night") === "1" ||
+        new URLSearchParams(location.search).has("night");
+      applyTheme(nightIn.checked);
+      nightIn.addEventListener("change", () => {
+        applyTheme(nightIn.checked);
+        localStorage.setItem("vm-night", nightIn.checked ? "1" : "0");
+        trailCol =
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--ink")
+            .trim() || "#2a211a";
+        toast(
+          nightIn.checked
+            ? "Night falls on Tal'Dorei — fresh ink everywhere"
+            : "Daybreak — official paperwork resumes"
+        );
+        redrawSketches();
+      });
+
+      // ============ ROLL FOR INITIATIVE: a hand-drawn d20 ============
+      const NS = "http://www.w3.org/2000/svg";
+      const d20Die = $("d20-die");
+      const d20Face = $("d20-face");
+      const d20Result = $("d20-result");
+
+      const buildD20 = () => {
+        d20Die.replaceChildren();
+        const svg = document.createElementNS(NS, "svg");
+        svg.setAttribute("viewBox", "0 0 140 140");
+        const frames = variants(
+          (o) => {
+            const cx = 70, cy = 62, r = 52;
+            const pts = [0, 1, 2, 3, 4, 5].map((i) => {
+              const a = ((i * 60 - 90) * Math.PI) / 180;
+              return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+            });
+            const lines = [];
+            for (let i = 0; i < 6; i++) {
+              const p = pts[i], q = pts[(i + 1) % 6];
+              lines.push(roughLine(p[0], p[1], q[0], q[1], o));
+              lines.push(roughLine(cx, cy, (p[0] + q[0]) / 2, (p[1] + q[1]) / 2, o));
+            }
+            lines.push(roughLine(pts[0][0], pts[0][1], pts[2][0], pts[2][1], o));
+            lines.push(roughLine(pts[2][0], pts[2][1], pts[4][0], pts[4][1], o));
+            return lines;
+          },
+          { seed: 9, roughness: 1.1, boil: 0.35 },
+        );
+        frames.forEach((f, i) => {
+          const g = document.createElementNS(NS, "g");
+          g.classList.add("drawably-boil");
+          g.dataset.i = i;
+          for (const d of f) {
+            const p = document.createElementNS(NS, "path");
+            p.setAttribute("d", d);
+            p.style.stroke = "var(--ink)";
+            p.style.strokeWidth = "1.6";
+            p.style.strokeLinecap = "round";
+            p.style.strokeLinejoin = "round";
+            p.style.fill = "none";
+            g.appendChild(p);
+          }
+          svg.appendChild(g);
+        });
+        d20Die.appendChild(svg);
+      };
+      buildD20();
+
+      let actx = null;
+      const rollSound = () => {
+        try {
+          actx = actx ?? new (window.AudioContext || window.webkitAudioContext)();
+          if (actx.state === "suspended") actx.resume();
+          const t = actx.currentTime;
+          const buf = actx.createBuffer(
+            1,
+            Math.floor(actx.sampleRate * 0.12),
+            actx.sampleRate,
+          );
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < data.length; i++)
+            data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+          const src = actx.createBufferSource();
+          src.buffer = buf;
+          const band = actx.createBiquadFilter();
+          band.type = "bandpass";
+          band.frequency.value = 2200;
+          band.Q.value = 1.2;
+          const gain = actx.createGain();
+          gain.gain.value = 0.5;
+          src.connect(band);
+          band.connect(gain);
+          gain.connect(actx.destination);
+          src.start(t);
+          for (let i = 0; i < 4; i++) {
+            const osc = actx.createOscillator();
+            osc.type = "triangle";
+            osc.frequency.value = 180 + Math.random() * 500;
+            const og = actx.createGain();
+            og.gain.setValueAtTime(0.1, t + i * 0.03);
+            og.gain.exponentialRampToValueAtTime(0.001, t + i * 0.03 + 0.03);
+            osc.connect(og);
+            og.connect(actx.destination);
+            osc.start(t + i * 0.03);
+            osc.stop(t + i * 0.03 + 0.04);
+          }
+        } catch {}
+      };
+
+      let rolling = false;
+      const roll20 = () => {
+        if (rolling) return;
+        rolling = true;
+        d20Die.classList.add("is-rolling");
+        d20Face.textContent = "?";
+        d20Result.textContent = "";
+        rollSound();
+        const val = 1 + Math.floor(Math.random() * 20);
+        window.setTimeout(() => {
+          d20Face.textContent = String(val);
+          d20Die.classList.remove("is-rolling");
+          rolling = false;
+          const msg =
+            val === 20
+              ? "NATURAL 20 — legend, ink-attested!"
+              : val === 1
+                ? "Nat 1… Grog believes in you anyway."
+                : "You rolled a " + val + ".";
+          d20Result.textContent = msg;
+          toast(msg);
+        }, 1050);
+      };
+      drawablyButton($("d20-btn"));
+      drawablyCard($("d20-card"));
+      $("d20-btn").addEventListener("click", roll20);
+      d20Die.addEventListener("click", roll20);
+
+    // ============ CHARACTER DOSSIERS ============
+      const modalArt = $("modal-art");
+      const modalCardEl = $("modal-card");
+      const mountModalArt = (name) =>
+        sketchPortrait(modalArt, name).then((ok) => {
+          if (!ok) drawPortrait(modalArt, name);
+        });
+      const openModal = (name) => {
+        const host = $("c-" + name);
+        const title = host?.querySelector("h3")?.textContent ?? name;
+        const role = host?.querySelector(".role")?.textContent ?? "HERO";
+        const bio = host?.querySelector("p")?.textContent ?? "";
+        const meta = CHARACTERS[name];
+        modalCardEl.dataset.name = name;
+        $("modal-name").textContent = title;
+        $("modal-badge").textContent = role;
+        $("modal-weapon").textContent = meta.weapon ? "Carried: " + meta.weapon : "";
+        $("modal-quote").textContent = meta.quote ? "\u201C" + meta.quote + "\u201D" : "";
+        $("modal-bio").textContent = bio;
+        modalArt.replaceChildren();
+        $("modal").hidden = false;
+        document.body.classList.add("no-scroll");
+        window.requestAnimationFrame(() => {
+          drawablyCard(modalCardEl, { seed: Math.floor(Math.random() * 2 ** 31) });
+          drawablyBadge($("modal-badge"));
+        });
+        mountModalArt(name);
+      };
+      const closeModal = () => {
+        $("modal").hidden = true;
+        document.body.classList.remove("no-scroll");
+      };
+      $("modal").addEventListener("click", (e) => {
+        if (e.target === $("modal") || e.target.closest(".modal-x")) closeModal();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !$("modal").hidden) closeModal();
+      });
+      drawablyButton($("modal-resketch"), { tone: "neutral" });
+      $("modal-resketch").addEventListener("click", () => {
+        const n = modalCardEl.dataset.name;
+        if (n) mountModalArt(n);
+      });
+      document.querySelectorAll(".crew .card .portrait").forEach((portrait) =>
+        portrait.addEventListener("click", () =>
+          openModal(portrait.id.replace(/^p-/, "")),
+        ),
+      );
+
+      // ============ BACK TO TOP ============
+      drawablyButton($("totop"), { tone: "neutral" });
+      $("totop").addEventListener("click", () => goTo("top"));
+
+    // ============ INK TRAIL + "CRIT" EASTER EGG ============
+      const trailCanvas = $("ink-trail");
+      if (trailCanvas && matchMedia("(pointer: fine)").matches && !prefersReduced) {
+        const fit = () => {
+          trailCanvas.width = innerWidth;
+          trailCanvas.height = innerHeight;
+        };
+        fit();
+        addEventListener("resize", fit);
+        const tctx = trailCanvas.getContext("2d");
+        const inkCol =
+          trailCol ||
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--ink")
+            .trim() ||
+          "#2a211a";
+        let lastPt = null;
+        addEventListener("pointermove", (e) => {
+          const x = e.clientX, y = e.clientY;
+          const col = trailCol || inkCol;
+          tctx.lineCap = "round";
+          tctx.globalAlpha = 0.2;
+          tctx.strokeStyle = col;
+          tctx.lineWidth = 1.5;
+          if (lastPt) {
+            tctx.beginPath();
+            tctx.moveTo(lastPt[0], lastPt[1]);
+            tctx.lineTo(x, y);
+            tctx.stroke();
+          }
+          tctx.fillStyle = col;
+          tctx.beginPath();
+          tctx.arc(x, y, 2, 0, 7);
+          tctx.fill();
+          lastPt = [x, y];
+          tctx.globalAlpha = 1;
+        });
+        const fade = () => {
+          tctx.globalCompositeOperation = "destination-out";
+          tctx.fillStyle = "rgba(0,0,0,0.07)";
+          tctx.fillRect(0, 0, trailCanvas.width, trailCanvas.height);
+          tctx.globalCompositeOperation = "source-over";
+          requestAnimationFrame(fade);
+        };
+        fade();
+      }
+
+      let keyBuf = "";
+      document.addEventListener("keydown", (e) => {
+        if (e.key.length !== 1) return;
+        keyBuf = (keyBuf + e.key).toLowerCase().slice(-8);
+        if (keyBuf.includes("crit")) {
+          keyBuf = "";
+          toast("CRIT! You roll a NATURAL 20 — the round is yours");
+          rollSound();
+        }
+      });
+
+      // if the saved theme was dark, the early mounts were drawn with the wrong
+      // (light-theme) ink — re-ink them all now that every feature is defined
+      if (nightIn.checked) redrawSketches();
+
+      // ============ OFFLINE / INSTALLABLE (PWA) ============
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      }
+    </script>
+
+
+  </body>
+</html>
