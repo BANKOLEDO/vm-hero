@@ -1,5 +1,5 @@
 // Image-to-sketch rendering
-import { mulberry32 } from "./drawably/dist/index.js";
+import { mulberry32 } from "./vendor/drawably/dist/index.js";
 
 function currentInk() {
   const v = getComputedStyle(document.documentElement)

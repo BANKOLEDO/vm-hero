@@ -4,7 +4,7 @@ import {
   roughEllipse,
   roughLine,
   variants,
-} from "./drawably/dist/index.js";
+} from "./vendor/drawably/dist/index.js";
 
 const NS = "http://www.w3.org/2000/svg";
 
